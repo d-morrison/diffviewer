@@ -35,6 +35,11 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
     widget_data,
     width = width,
     height = height,
+    sizingPolicy = htmlwidgets::sizingPolicy(
+      defaultWidth = "100%",
+      defaultHeight = "auto",
+      knitr.figure = FALSE
+    ),
     package = "diffviewer"
   )
 }
