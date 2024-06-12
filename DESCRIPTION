@@ -1,6 +1,6 @@
 Package: diffviewer
 Title: HTML Widget to Show File Differences
-Version: 0.1.2
+Version: 0.1.2.9000
 Authors@R: c(
     person("Hadley", "Wickham", , "hadley@posit.co", role = c("aut", "cre")),
     person("Joshua", "Kunst", role = "aut"),
