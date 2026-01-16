@@ -1,5 +1,10 @@
 # diffviewer (development version)
 
+* Added support for comparing `.rds` files containing R objects using the waldo package (#XX).
+  - Data frames in `.rds` files are compared using daff.js
+  - Other R objects (excluding plots) are compared using waldo
+  - Plot objects are displayed as text
+
 # diffviewer 0.1.2
 
 * diffviewer gets a sizing policy that works better in Rmds, and some css tweaks to ensure it's readable in dark mode.
