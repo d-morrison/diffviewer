@@ -34,17 +34,31 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
     # Check if both are data.frames
     if (is_data_frame(old_obj) && is_data_frame(new_obj)) {
       # Use CSV comparison (daff.js)
+      # Convert data.frames to CSV format
+      old_csv <- tempfile(fileext = ".csv")
+      new_csv <- tempfile(fileext = ".csv")
+      on.exit(unlink(c(old_csv, new_csv)), add = TRUE)
+      
+      utils::write.csv(old_obj, old_csv, row.names = FALSE)
+      utils::write.csv(new_obj, new_csv, row.names = FALSE)
+      
+      old_raw <- read_raw(old_csv)
+      new_raw <- read_raw(new_csv)
+      
       widget_data <- list(
-        old = rds_to_data(file_old),
-        new = rds_to_data(file_new),
+        old = paste0("data:text/csv;base64,", jsonlite::base64_enc(old_raw)),
+        new = paste0("data:text/csv;base64,", jsonlite::base64_enc(new_raw)),
         filename = basename(file_old),
         typediff = "data"
       )
-    } else if (is_plot_object(old_obj) || is_plot_object(new_obj)) {
-      # For plot objects, convert to text
+    } else if (is_plot_object(old_obj) && is_plot_object(new_obj)) {
+      # For plot objects, convert to text representation
+      old_text <- paste(utils::capture.output(print(old_obj)), collapse = "\n")
+      new_text <- paste(utils::capture.output(print(new_obj)), collapse = "\n")
+      
       widget_data <- list(
-        old = rds_to_data(file_old),
-        new = rds_to_data(file_new),
+        old = old_text,
+        new = new_text,
         filename = basename(file_old),
         typediff = "text"
       )
@@ -54,7 +68,7 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
       
       if (length(comparison) == 0) {
         # Objects are identical - show the structure
-        obj_text <- paste(utils::capture.output(str(old_obj)), collapse = "\n")
+        obj_text <- paste(utils::capture.output(utils::str(old_obj)), collapse = "\n")
         widget_data <- list(
           old = obj_text,
           new = obj_text,
@@ -66,10 +80,10 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
         # waldo returns a character vector; each element is a line of the comparison
         waldo_output <- paste(comparison, collapse = "\n")
         
-        # Show waldo output in "old" and empty in "new" to display as-is
+        # Show waldo output in "old" and same in "new" to avoid additional diffing
         widget_data <- list(
           old = waldo_output,
-          new = waldo_output,  # Set same to avoid additional diffing
+          new = waldo_output,
           filename = basename(file_old),
           typediff = "text"
         )

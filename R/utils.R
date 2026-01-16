@@ -37,28 +37,6 @@ file_data <- function(path) {
   )
 }
 
-rds_to_data <- function(path) {
-  obj <- readRDS(path)
-  
-  # If it's a data.frame, export as CSV
-  if (is_data_frame(obj)) {
-    csv_path <- tempfile(fileext = ".csv")
-    on.exit(unlink(csv_path), add = TRUE)
-    utils::write.csv(obj, csv_path, row.names = FALSE)
-    raw <- read_raw(csv_path)
-    return(paste0("data:text/csv;base64,", jsonlite::base64_enc(raw)))
-  }
-  
-  # If it's a plot object, convert to text representation
-  if (is_plot_object(obj)) {
-    text <- paste(utils::capture.output(print(obj)), collapse = "\n")
-    return(text)
-  }
-  
-  # For everything else, return NULL to signal we need special handling
-  return(NULL)
-}
-
 file_type <- function(path) {
   switch(tolower(tools::file_ext(path)),
     png = ,
