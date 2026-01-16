@@ -31,8 +31,23 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
     old_obj <- readRDS(file_old)
     new_obj <- readRDS(file_new)
     
+    # Determine object types
+    old_is_df <- is_data_frame(old_obj)
+    new_is_df <- is_data_frame(new_obj)
+    old_is_plot <- is_plot_object(old_obj)
+    new_is_plot <- is_plot_object(new_obj)
+    
+    # Check type compatibility
+    if (old_is_df != new_is_df || old_is_plot != new_is_plot) {
+      stop("Cannot compare .rds files with different object types. ",
+           "Old file contains ", 
+           if (old_is_df) "data.frame" else if (old_is_plot) "plot object" else "R object",
+           ", new file contains ",
+           if (new_is_df) "data.frame" else if (new_is_plot) "plot object" else "R object")
+    }
+    
     # Check if both are data.frames
-    if (is_data_frame(old_obj) && is_data_frame(new_obj)) {
+    if (old_is_df && new_is_df) {
       # Use CSV comparison (daff.js)
       # Convert data.frames to CSV format
       old_csv <- tempfile(fileext = ".csv")
@@ -51,7 +66,7 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
         filename = basename(file_old),
         typediff = "data"
       )
-    } else if (is_plot_object(old_obj) && is_plot_object(new_obj)) {
+    } else if (old_is_plot && new_is_plot) {
       # For plot objects, convert to text representation
       old_text <- paste(utils::capture.output(print(old_obj)), collapse = "\n")
       new_text <- paste(utils::capture.output(print(new_obj)), collapse = "\n")
