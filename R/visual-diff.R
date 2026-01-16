@@ -2,7 +2,8 @@
 #'
 #' Currently supports:
 #' * image diffs for `.svg` and `.png`
-#' * tabular diffs for `.csv`
+#' * tabular diffs for `.csv` and `.rds` files containing data.frames
+#' * object diffs for `.rds` files containing other R objects (using waldo)
 #' * text diffs for everything else
 #'
 #' @param file_old,file_new Paths to files to compare
@@ -23,12 +24,51 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
   stopifnot(file.exists(file_old), file.exists(file_new))
   stopifnot(tolower(tools::file_ext(file_old)) == tolower(tools::file_ext(file_new)))
 
-  widget_data <- list(
-    old = file_data(file_old),
-    new = file_data(file_new),
-    filename = basename(file_old),
-    typediff = file_type(file_old)
-  )
+  ext <- tolower(tools::file_ext(file_old))
+  
+  # Special handling for .rds files
+  if (ext == "rds") {
+    old_obj <- readRDS(file_old)
+    new_obj <- readRDS(file_new)
+    
+    # Check if both are data.frames
+    if (is_data_frame(old_obj) && is_data_frame(new_obj)) {
+      # Use CSV comparison (daff.js)
+      widget_data <- list(
+        old = rds_to_data(file_old),
+        new = rds_to_data(file_new),
+        filename = basename(file_old),
+        typediff = "data"
+      )
+    } else if (is_plot_object(old_obj) || is_plot_object(new_obj)) {
+      # For plot objects, convert to text
+      widget_data <- list(
+        old = rds_to_data(file_old),
+        new = rds_to_data(file_new),
+        filename = basename(file_old),
+        typediff = "text"
+      )
+    } else {
+      # Use waldo for everything else
+      comparison <- waldo::compare(old_obj, new_obj)
+      # waldo::compare returns a character vector
+      diff_text <- paste(comparison, collapse = "\n")
+      
+      widget_data <- list(
+        old = diff_text,
+        new = "",  # Empty since waldo shows the full comparison
+        filename = basename(file_old),
+        typediff = "text"
+      )
+    }
+  } else {
+    widget_data <- list(
+      old = file_data(file_old),
+      new = file_data(file_new),
+      filename = basename(file_old),
+      typediff = file_type(file_old)
+    )
+  }
 
   htmlwidgets::createWidget(
     name = "visual_diff",

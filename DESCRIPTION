@@ -28,7 +28,8 @@ Depends:
     R (>= 3.6.0)
 Imports: 
     htmlwidgets,
-    jsonlite
+    jsonlite,
+    waldo
 Suggests: 
     covr,
     shiny
