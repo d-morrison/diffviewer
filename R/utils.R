@@ -63,20 +63,7 @@ file_type <- function(path) {
   switch(tolower(tools::file_ext(path)),
     png = ,
     svg = "image",
-    csv = ,
-    rds = "data",
+    csv = "data",
     "text"
   )
-}
-
-rds_type <- function(path) {
-  obj <- readRDS(path)
-  
-  # If it's a data.frame, use "data" type (for daff)
-  if (is_data_frame(obj)) {
-    return("data")
-  }
-  
-  # For everything else (including plots), use "text" type
-  return("text")
 }
