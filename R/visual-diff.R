@@ -28,22 +28,34 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
   
   # Special handling for .rds files
   if (ext == "rds") {
-    old_obj <- readRDS(file_old)
-    new_obj <- readRDS(file_new)
+    # Read RDS files with error handling
+    old_obj <- tryCatch(
+      readRDS(file_old),
+      error = function(e) {
+        stop("Failed to read old .rds file: ", file_old, "\n", e$message, call. = FALSE)
+      }
+    )
+    new_obj <- tryCatch(
+      readRDS(file_new),
+      error = function(e) {
+        stop("Failed to read new .rds file: ", file_new, "\n", e$message, call. = FALSE)
+      }
+    )
     
-    # Determine object types
+    # Determine object types (in priority order)
     old_is_df <- is_data_frame(old_obj)
     new_is_df <- is_data_frame(new_obj)
-    old_is_plot <- is_plot_object(old_obj)
-    new_is_plot <- is_plot_object(new_obj)
+    old_is_plot <- !old_is_df && is_plot_object(old_obj)
+    new_is_plot <- !new_is_df && is_plot_object(new_obj)
     
-    # Check type compatibility
-    if (old_is_df != new_is_df || old_is_plot != new_is_plot) {
+    # Check type compatibility - use simplified type names for error message
+    old_type <- if (old_is_df) "data.frame" else if (old_is_plot) "plot" else "object"
+    new_type <- if (new_is_df) "data.frame" else if (new_is_plot) "plot" else "object"
+    
+    if (old_type != new_type) {
       stop("Cannot compare .rds files with different object types. ",
-           "Old file contains ", 
-           if (old_is_df) "data.frame" else if (old_is_plot) "plot object" else "R object",
-           ", new file contains ",
-           if (new_is_df) "data.frame" else if (new_is_plot) "plot object" else "R object")
+           "Old file contains ", old_type, ", new file contains ", new_type,
+           call. = FALSE)
     }
     
     # Check if both are data.frames
@@ -79,7 +91,12 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
       )
     } else {
       # Use waldo for everything else (non-plot, non-data.frame objects)
-      comparison <- waldo::compare(old_obj, new_obj)
+      comparison <- tryCatch(
+        waldo::compare(old_obj, new_obj),
+        error = function(e) {
+          stop("Failed to compare R objects using waldo: ", e$message, call. = FALSE)
+        }
+      )
       
       if (length(comparison) == 0) {
         # Objects are identical - show the structure
@@ -91,14 +108,17 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
           typediff = "text"
         )
       } else {
-        # Objects differ - use waldo's comparison output
-        # waldo returns a character vector; each element is a line of the comparison
+        # Objects differ - serialize both objects and prepend waldo comparison
+        old_text <- paste(utils::capture.output(dput(old_obj)), collapse = "\n")
+        new_text <- paste(utils::capture.output(dput(new_obj)), collapse = "\n")
         waldo_output <- paste(comparison, collapse = "\n")
         
-        # Show waldo output in "old" and same in "new" to avoid additional diffing
+        # Prepend waldo comparison to both sides for context
+        waldo_header <- paste0("# Waldo comparison:\n", waldo_output, "\n\n# Object:\n")
+        
         widget_data <- list(
-          old = waldo_output,
-          new = waldo_output,
+          old = paste0(waldo_header, old_text),
+          new = paste0(waldo_header, new_text),
           filename = basename(file_old),
           typediff = "text"
         )
