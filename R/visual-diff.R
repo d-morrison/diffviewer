@@ -49,17 +49,31 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
         typediff = "text"
       )
     } else {
-      # Use waldo for everything else
+      # Use waldo for everything else (non-plot, non-data.frame objects)
       comparison <- waldo::compare(old_obj, new_obj)
-      # waldo::compare returns a character vector
-      diff_text <- paste(comparison, collapse = "\n")
       
-      widget_data <- list(
-        old = diff_text,
-        new = "",  # Empty since waldo shows the full comparison
-        filename = basename(file_old),
-        typediff = "text"
-      )
+      if (length(comparison) == 0) {
+        # Objects are identical - show the structure
+        obj_text <- paste(utils::capture.output(str(old_obj)), collapse = "\n")
+        widget_data <- list(
+          old = obj_text,
+          new = obj_text,
+          filename = basename(file_old),
+          typediff = "text"
+        )
+      } else {
+        # Objects differ - use waldo's comparison output
+        # waldo returns a character vector; each element is a line of the comparison
+        waldo_output <- paste(comparison, collapse = "\n")
+        
+        # Show waldo output in "old" and empty in "new" to display as-is
+        widget_data <- list(
+          old = waldo_output,
+          new = waldo_output,  # Set same to avoid additional diffing
+          filename = basename(file_old),
+          typediff = "text"
+        )
+      }
     }
   } else {
     widget_data <- list(
