@@ -12,22 +12,23 @@ is.dir <- function(x) {
   file.info(x)$isdir
 }
 
-is_ggplot <- function(x) {
-  inherits(x, "ggplot")
-}
-
-is_plot_object <- function(x) {
-  # Check for common plot types
-  is_ggplot(x) || inherits(x, c("recordedplot", "grob", "gTree"))
-}
-
-is_data_frame <- function(x) {
-  inherits(x, "data.frame")
-}
-
 file_data <- function(path) {
-  raw <- read_raw(path)
   ext <- tolower(tools::file_ext(path))
+  
+  if (ext == "rds") {
+    # Read RDS file with error handling
+    obj <- tryCatch(
+      readRDS(path),
+      error = function(e) {
+        stop("Failed to read .rds file: ", path, "\n", e$message, call. = FALSE)
+      }
+    )
+    
+    # Return the R object itself (will be compared by waldo in visual_diff)
+    return(obj)
+  }
+  
+  raw <- read_raw(path)
 
   filedata <- switch(ext,
     png = paste0("data:image/png;base64,", jsonlite::base64_enc(raw)),
@@ -42,6 +43,7 @@ file_type <- function(path) {
     png = ,
     svg = "image",
     csv = "data",
+    rds = "rds",
     "text"
   )
 }

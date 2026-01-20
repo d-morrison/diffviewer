@@ -2,8 +2,8 @@
 #'
 #' Currently supports:
 #' * image diffs for `.svg` and `.png`
-#' * tabular diffs for `.csv` and `.rds` files containing data.frames
-#' * object diffs for `.rds` files containing other R objects (using waldo)
+#' * tabular diffs for `.csv`
+#' * object diffs for `.rds` files (using waldo)
 #' * text diffs for everything else
 #'
 #' @param file_old,file_new Paths to files to compare
@@ -24,112 +24,52 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
   stopifnot(file.exists(file_old), file.exists(file_new))
   stopifnot(tolower(tools::file_ext(file_old)) == tolower(tools::file_ext(file_new)))
 
-  ext <- tolower(tools::file_ext(file_old))
+  typediff <- file_type(file_old)
   
   # Special handling for .rds files
-  if (ext == "rds") {
-    # Read RDS files with error handling
-    old_obj <- tryCatch(
-      readRDS(file_old),
+  if (typediff == "rds") {
+    old_obj <- file_data(file_old)
+    new_obj <- file_data(file_new)
+    
+    # Use waldo to compare R objects
+    comparison <- tryCatch(
+      waldo::compare(old_obj, new_obj),
       error = function(e) {
-        stop("Failed to read old .rds file: ", file_old, "\n", e$message, call. = FALSE)
-      }
-    )
-    new_obj <- tryCatch(
-      readRDS(file_new),
-      error = function(e) {
-        stop("Failed to read new .rds file: ", file_new, "\n", e$message, call. = FALSE)
+        stop("Failed to compare R objects using waldo: ", e$message, call. = FALSE)
       }
     )
     
-    # Determine object types (in priority order)
-    old_is_df <- is_data_frame(old_obj)
-    new_is_df <- is_data_frame(new_obj)
-    old_is_plot <- !old_is_df && is_plot_object(old_obj)
-    new_is_plot <- !new_is_df && is_plot_object(new_obj)
-    
-    # Check type compatibility - use simplified type names for error message
-    old_type <- if (old_is_df) "data.frame" else if (old_is_plot) "plot" else "object"
-    new_type <- if (new_is_df) "data.frame" else if (new_is_plot) "plot" else "object"
-    
-    if (old_type != new_type) {
-      stop("Cannot compare .rds files with different object types. ",
-           "Old file contains ", old_type, ", new file contains ", new_type,
-           call. = FALSE)
-    }
-    
-    # Check if both are data.frames
-    if (old_is_df && new_is_df) {
-      # Use CSV comparison (daff.js)
-      # Convert data.frames to CSV format
-      old_csv <- tempfile(fileext = ".csv")
-      new_csv <- tempfile(fileext = ".csv")
-      on.exit(unlink(c(old_csv, new_csv)), add = TRUE)
-      
-      utils::write.csv(old_obj, old_csv, row.names = FALSE)
-      utils::write.csv(new_obj, new_csv, row.names = FALSE)
-      
-      old_raw <- read_raw(old_csv)
-      new_raw <- read_raw(new_csv)
-      
+    if (length(comparison) == 0) {
+      # Objects are identical - show the structure
+      obj_text <- paste(utils::capture.output(utils::str(old_obj)), collapse = "\n")
       widget_data <- list(
-        old = paste0("data:text/csv;base64,", jsonlite::base64_enc(old_raw)),
-        new = paste0("data:text/csv;base64,", jsonlite::base64_enc(new_raw)),
-        filename = basename(file_old),
-        typediff = "data"
-      )
-    } else if (old_is_plot && new_is_plot) {
-      # For plot objects, convert to text representation
-      old_text <- paste(utils::capture.output(print(old_obj)), collapse = "\n")
-      new_text <- paste(utils::capture.output(print(new_obj)), collapse = "\n")
-      
-      widget_data <- list(
-        old = old_text,
-        new = new_text,
+        old = obj_text,
+        new = obj_text,
         filename = basename(file_old),
         typediff = "text"
       )
     } else {
-      # Use waldo for everything else (non-plot, non-data.frame objects)
-      comparison <- tryCatch(
-        waldo::compare(old_obj, new_obj),
-        error = function(e) {
-          stop("Failed to compare R objects using waldo: ", e$message, call. = FALSE)
-        }
-      )
+      # Objects differ - serialize both objects and prepend waldo comparison
+      old_text <- paste(utils::capture.output(dput(old_obj)), collapse = "\n")
+      new_text <- paste(utils::capture.output(dput(new_obj)), collapse = "\n")
+      waldo_output <- paste(comparison, collapse = "\n")
       
-      if (length(comparison) == 0) {
-        # Objects are identical - show the structure
-        obj_text <- paste(utils::capture.output(utils::str(old_obj)), collapse = "\n")
-        widget_data <- list(
-          old = obj_text,
-          new = obj_text,
-          filename = basename(file_old),
-          typediff = "text"
-        )
-      } else {
-        # Objects differ - serialize both objects and prepend waldo comparison
-        old_text <- paste(utils::capture.output(dput(old_obj)), collapse = "\n")
-        new_text <- paste(utils::capture.output(dput(new_obj)), collapse = "\n")
-        waldo_output <- paste(comparison, collapse = "\n")
-        
-        # Prepend waldo comparison to both sides for context
-        waldo_header <- paste0("# Waldo comparison:\n", waldo_output, "\n\n# Object:\n")
-        
-        widget_data <- list(
-          old = paste0(waldo_header, old_text),
-          new = paste0(waldo_header, new_text),
-          filename = basename(file_old),
-          typediff = "text"
-        )
-      }
+      # Prepend waldo comparison to both sides for context
+      waldo_header <- paste0("# Waldo comparison:\n", waldo_output, "\n\n# Object:\n")
+      
+      widget_data <- list(
+        old = paste0(waldo_header, old_text),
+        new = paste0(waldo_header, new_text),
+        filename = basename(file_old),
+        typediff = "text"
+      )
     }
   } else {
     widget_data <- list(
       old = file_data(file_old),
       new = file_data(file_new),
       filename = basename(file_old),
-      typediff = file_type(file_old)
+      typediff = typediff
     )
   }
 
