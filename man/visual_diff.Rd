@@ -19,6 +19,7 @@ Currently supports:
 \itemize{
 \item image diffs for \code{.svg} and \code{.png}
 \item tabular diffs for \code{.csv}
+\item object diffs for \code{.rds} files (using waldo)
 \item text diffs for everything else
 }
 }

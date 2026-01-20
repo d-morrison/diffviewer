@@ -6,7 +6,7 @@
 \alias{diffviewer-package}
 \title{diffviewer: HTML Widget to Show File Differences}
 \description{
-A HTML widget that shows differences between files (text, images, and data frames).
+A HTML widget that shows differences between files (text, images, data frames, and R objects).
 }
 \seealso{
 Useful links:
