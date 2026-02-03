@@ -20,10 +20,11 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/r-lib/diffviewer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/diffviewer/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-diffviewer provides an HTML widget for visually comparing files. It currently wraps three javascript libraries:
+diffviewer provides an HTML widget for visually comparing files. It currently wraps several javascript libraries:
 
 * [resemble.js](https://rsmbl.github.io/Resemble.js/) for comparing images.
 * [daff.js](https://paulfitz.github.io/daff/) for comparing data frames.
+* [diffobj](https://github.com/brodieG/diffobj) for comparing R objects (RDS files).
 * [jsdiff](https://github.com/kpdecker/jsdiff) for everything else.
 
 It extracts out common UI provided by [shinytest](https://rstudio.github.io/shinytest/index.html) and [vdiffr](https://vdiffr.r-lib.org).

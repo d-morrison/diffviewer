@@ -3,6 +3,7 @@
 #' Currently supports:
 #' * image diffs for `.svg` and `.png`
 #' * tabular diffs for `.csv`
+#' * object diffs for `.rds` (R serialized objects)
 #' * text diffs for everything else
 #'
 #' @param file_old,file_new Paths to files to compare
