@@ -32,7 +32,7 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
     obj_new <- readRDS(file_new)
     
     # Use diffobj to create the diff
-    diff_result <- diffobj::diffPrint(
+    diff_result <- diffobj::diffStr(
       obj_old, 
       obj_new, 
       mode = "unified",

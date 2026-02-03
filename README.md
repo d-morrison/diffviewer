@@ -1,30 +1,33 @@
----
-output: github_document
----
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-
 
 # diffviewer
 
 <!-- badges: start -->
-[![Codecov test coverage](https://codecov.io/gh/r-lib/diffviewer/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r-lib/diffviewer?branch=main)
+
+[![Codecov test
+coverage](https://codecov.io/gh/r-lib/diffviewer/branch/main/graph/badge.svg)](https://app.codecov.io/gh/r-lib/diffviewer?branch=main)
 [![R-CMD-check](https://github.com/r-lib/diffviewer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/diffviewer/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-diffviewer provides an HTML widget for visually comparing files. It currently wraps several javascript libraries:
+diffviewer provides an HTML widget for visually comparing files. It
+currently wraps several javascript libraries:
 
-* [resemble.js](https://rsmbl.github.io/Resemble.js/) for comparing images.
-* [daff.js](https://paulfitz.github.io/daff/) for comparing data frames.
-* [diffobj](https://github.com/brodieG/diffobj) for comparing R objects (RDS files).
-* [jsdiff](https://github.com/kpdecker/jsdiff) for text files.
+- [resemble.js](https://rsmbl.github.io/Resemble.js/) for comparing
+  images.
+- [daff.js](https://paulfitz.github.io/daff/) for comparing data frames.
+- [diffobj](https://github.com/brodieG/diffobj) for comparing R objects
+  (RDS files).
+- [jsdiff](https://github.com/kpdecker/jsdiff) for text files.
 
-It extracts out common UI provided by [shinytest](https://rstudio.github.io/shinytest/index.html) and [vdiffr](https://vdiffr.r-lib.org).
+It extracts out common UI provided by
+[shinytest](https://rstudio.github.io/shinytest/index.html) and
+[vdiffr](https://vdiffr.r-lib.org).
 
 ## Installation
 
-You can install the released version of diffviewer from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of diffviewer from
+[CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("diffviewer")
@@ -33,7 +36,6 @@ install.packages("diffviewer")
 ## Example
 
 This is a basic example which shows you how to solve a common problem:
-
 
 ``` r
 library(diffviewer)
