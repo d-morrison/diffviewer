@@ -54,8 +54,11 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
       new_text <- paste(utils::capture.output(dput(new_obj)), collapse = "\n")
       waldo_output <- paste(comparison, collapse = "\n")
       
+      # Strip ANSI escape codes from waldo output for clean display
+      waldo_output_clean <- gsub("\033\\[[0-9;]*[mGKHF]", "", waldo_output, perl = TRUE)
+      
       # Prepend waldo comparison to both sides for context
-      waldo_header <- paste0("# Waldo comparison:\n", waldo_output, "\n\n# Object:\n")
+      waldo_header <- paste0("# Waldo comparison:\n", waldo_output_clean, "\n\n# Object:\n")
       
       widget_data <- list(
         old = paste0(waldo_header, old_text),
