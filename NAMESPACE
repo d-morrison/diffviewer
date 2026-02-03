@@ -3,4 +3,3 @@
 export(visual_diff)
 export(visual_diff_output)
 export(visual_diff_render)
-importFrom(utils,str)

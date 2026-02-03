@@ -17,9 +17,8 @@ diffviewer provides an HTML widget for visually comparing files. It currently wr
 
 * [resemble.js](https://rsmbl.github.io/Resemble.js/) for comparing images.
 * [daff.js](https://paulfitz.github.io/daff/) for comparing data frames.
-* [jsdiff](https://github.com/kpdecker/jsdiff) for text files and R objects (RDS files).
-
-For RDS files, objects are converted to text using `str()` and then compared using jsdiff.
+* [diffobj](https://github.com/brodieG/diffobj) for comparing R objects (RDS files).
+* [jsdiff](https://github.com/kpdecker/jsdiff) for text files.
 
 It extracts out common UI provided by [shinytest](https://rstudio.github.io/shinytest/index.html) and [vdiffr](https://vdiffr.r-lib.org).
 
@@ -36,7 +35,7 @@ install.packages("diffviewer")
 This is a basic example which shows you how to solve a common problem:
 
 
-```r
+``` r
 library(diffviewer)
 path1 <- tempfile()
 writeLines(letters, path1)
