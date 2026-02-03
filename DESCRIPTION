@@ -15,18 +15,21 @@ Authors@R: c(
     person("Kevin", "Decker", role = "cph",
            comment = "Author of included jsdiff library"),
     person("Matthew", "Holt", role = "cph",
-           comment = "Author of incldued PapaParse library"),
+           comment = "Author of included PapaParse library"),
     person("Huddle", role = "cph",
-           comment = "Author of included resemble library")
+           comment = "Author of included resemble library"),
+    person("Brodie", "Gaslam", role = "cph",
+           comment = "Author of included diffobj library")
   )
 Description: A HTML widget that shows differences between files (text,
-    images, and data frames).
+    images, data frames, and R objects).
 License: MIT + file LICENSE
 URL: https://diffviewer.r-lib.org, https://github.com/r-lib/diffviewer
 BugReports: https://github.com/r-lib/diffviewer/issues
 Depends: 
     R (>= 3.6.0)
 Imports: 
+    diffobj,
     htmlwidgets,
     jsonlite
 Suggests: 
@@ -35,4 +38,4 @@ Suggests:
 Config/Needs/website: tidyverse/tidytemplate
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3

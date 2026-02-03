@@ -11,12 +11,14 @@ coverage](https://codecov.io/gh/r-lib/diffviewer/branch/main/graph/badge.svg)](h
 <!-- badges: end -->
 
 diffviewer provides an HTML widget for visually comparing files. It
-currently wraps three javascript libraries:
+currently wraps several javascript libraries:
 
 - [resemble.js](https://rsmbl.github.io/Resemble.js/) for comparing
   images.
 - [daff.js](https://paulfitz.github.io/daff/) for comparing data frames.
-- [jsdiff](https://github.com/kpdecker/jsdiff) for everything else.
+- [diffobj](https://github.com/brodieG/diffobj) for comparing R objects
+  (RDS files).
+- [jsdiff](https://github.com/kpdecker/jsdiff) for text files.
 
 It extracts out common UI provided by
 [shinytest](https://rstudio.github.io/shinytest/index.html) and

@@ -3,6 +3,7 @@
 #' Currently supports:
 #' * image diffs for `.svg` and `.png`
 #' * tabular diffs for `.csv`
+#' * object diffs for `.rds` (R serialized objects)
 #' * text diffs for everything else
 #'
 #' @param file_old,file_new Paths to files to compare
@@ -23,12 +24,37 @@ visual_diff <- function(file_old, file_new, width = NULL, height = NULL) {
   stopifnot(file.exists(file_old), file.exists(file_new))
   stopifnot(tolower(tools::file_ext(file_old)) == tolower(tools::file_ext(file_new)))
 
-  widget_data <- list(
-    old = file_data(file_old),
-    new = file_data(file_new),
-    filename = basename(file_old),
-    typediff = file_type(file_old)
-  )
+  file_type_val <- file_type(file_old)
+  
+  # For RDS files, use diffobj to generate the diff HTML in R
+  if (file_type_val == "rds") {
+    obj_old <- readRDS(file_old)
+    obj_new <- readRDS(file_new)
+    
+    # Use diffobj to create the diff
+    diff_result <- diffobj::diffStr(
+      obj_old, 
+      obj_new, 
+      mode = "unified",
+      style = diffobj::StyleHtmlLightYb()
+    )
+    
+    # Get the HTML as a string
+    diff_html <- as.character(diff_result)
+    
+    widget_data <- list(
+      diff_html = diff_html,
+      filename = basename(file_old),
+      typediff = "rds"
+    )
+  } else {
+    widget_data <- list(
+      old = file_data(file_old),
+      new = file_data(file_new),
+      filename = basename(file_old),
+      typediff = file_type_val
+    )
+  }
 
   htmlwidgets::createWidget(
     name = "visual_diff",

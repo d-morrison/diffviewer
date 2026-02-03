@@ -29,6 +29,7 @@ file_type <- function(path) {
     png = ,
     svg = "image",
     csv = "data",
+    rds = "rds",
     "text"
   )
 }
