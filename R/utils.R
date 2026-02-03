@@ -24,7 +24,7 @@ file_data <- function(path) {
       # For RDS files, read the object and convert to string representation
       obj <- readRDS(path)
       # Use capture.output with str() to get a readable representation
-      paste(utils::capture.output(str(obj)), collapse = "\n")
+      paste(utils::capture.output(utils::str(obj)), collapse = "\n")
     },
     raw_to_utf8(raw)
   )

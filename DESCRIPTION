@@ -15,11 +15,9 @@ Authors@R: c(
     person("Kevin", "Decker", role = "cph",
            comment = "Author of included jsdiff library"),
     person("Matthew", "Holt", role = "cph",
-           comment = "Author of incldued PapaParse library"),
+           comment = "Author of included PapaParse library"),
     person("Huddle", role = "cph",
-           comment = "Author of included resemble library"),
-    person("Brodie", "Gaslam", role = "cph",
-           comment = "Author of included diffobj library")
+           comment = "Author of included resemble library")
   )
 Description: A HTML widget that shows differences between files (text,
     images, data frames, and R objects).

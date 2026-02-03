@@ -33,9 +33,8 @@ Other contributors:
   \item Rodrigo Fernandes (Author of included diff2html library) [copyright holder]
   \item JQuery Foundation (Author of included jquery library) [copyright holder]
   \item Kevin Decker (Author of included jsdiff library) [copyright holder]
-  \item Matthew Holt (Author of incldued PapaParse library) [copyright holder]
+  \item Matthew Holt (Author of included PapaParse library) [copyright holder]
   \item Huddle (Author of included resemble library) [copyright holder]
-  \item Brodie Gaslam (Author of included diffobj library) [copyright holder]
 }
 
 }

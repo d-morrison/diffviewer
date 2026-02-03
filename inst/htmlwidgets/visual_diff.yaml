@@ -34,13 +34,6 @@ dependencies:
       - daff.js
     stylesheet:
       - daff_handsontable.css
-  - name: diffobj
-    version: 0.3.5
-    src: htmlwidgets/lib/diffobj
-    script:
-      - diffobj.js
-    stylesheet:
-      - diffobj.css
   - name: diffviewer
     version: 0.1
     src: htmlwidgets/lib/diffviewer
