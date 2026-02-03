@@ -20,6 +20,12 @@ file_data <- function(path) {
     png = paste0("data:image/png;base64,", jsonlite::base64_enc(raw)),
     svg = paste0("data:image/svg+xml;base64,", jsonlite::base64_enc(raw)),
     csv = paste0("data:text/csv;base64,", jsonlite::base64_enc(raw)),
+    rds = {
+      # For RDS files, read the object and convert to string representation
+      obj <- readRDS(path)
+      # Use capture.output with str() to get a readable representation
+      paste(utils::capture.output(str(obj)), collapse = "\n")
+    },
     raw_to_utf8(raw)
   )
 }
@@ -29,6 +35,7 @@ file_type <- function(path) {
     png = ,
     svg = "image",
     csv = "data",
+    rds = "rds",
     "text"
   )
 }

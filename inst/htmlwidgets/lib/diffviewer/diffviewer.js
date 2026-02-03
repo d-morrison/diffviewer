@@ -52,6 +52,12 @@ diffviewer = (function() {
 
         result = create_daff($el, message.filename, message.old, message.new);
 
+      } else if (message.typediff == "rds") {
+
+        console.log("RDS");
+
+        result = create_rds_diff($el, message.filename, message.old, message.new);
+
       }
 
       console.log(result);
@@ -438,6 +444,12 @@ diffviewer = (function() {
 
     return state;
 
+  }
+
+  function create_rds_diff(el, filename, old_rds, new_rds) {
+    // For RDS files, use text diff with the string representations
+    // The R code has already converted each RDS object to a string using str()
+    return create_text_diff(el, filename, old_rds, new_rds);
   }
 
   var Views = (function() {
