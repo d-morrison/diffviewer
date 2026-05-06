@@ -1,7 +1,7 @@
 # diffviewer: HTML Widget to Show File Differences
 
-A HTML widget that shows differences between files (text, images, and
-data frames).
+A HTML widget that shows differences between files (text, images, data
+frames, and R objects).
 
 ## See also
 
@@ -38,7 +38,10 @@ Other contributors:
 
 - Kevin Decker (Author of included jsdiff library) \[copyright holder\]
 
-- Matthew Holt (Author of incldued PapaParse library) \[copyright
+- Matthew Holt (Author of included PapaParse library) \[copyright
   holder\]
 
 - Huddle (Author of included resemble library) \[copyright holder\]
+
+- Brodie Gaslam (Author of included diffobj library) \[copyright
+  holder\]

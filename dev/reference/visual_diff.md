@@ -6,6 +6,8 @@ Currently supports:
 
 - tabular diffs for `.csv`
 
+- object diffs for `.rds` (R serialized objects)
+
 - text diffs for everything else
 
 ## Usage

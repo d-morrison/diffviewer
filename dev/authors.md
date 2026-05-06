@@ -24,10 +24,13 @@
   Author of included jsdiff library
 
 - **Matthew Holt**. Copyright holder.  
-  Author of incldued PapaParse library
+  Author of included PapaParse library
 
 - **Huddle**. Copyright holder.  
   Author of included resemble library
+
+- **Brodie Gaslam**. Copyright holder.  
+  Author of included diffobj library
 
 ## Citation
 
